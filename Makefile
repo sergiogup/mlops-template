@@ -1,13 +1,20 @@
+venv_name = <venv_name>
+
+venv:
+	python -m venv ~/.venv/$(venv_name)
+	source ~/.venv/$(venv_name)/bin/activate
+
+venv_jupyter:
+	python -m ipykernel install --user --name venv_name --display-name "$(venv_name)"
+	
 install:
 	pip install --upgrade pip &&\
 		pip install -r requirements.txt
-	#force install latest whisper
-	pip install --upgrade --no-deps --force-reinstall git+https://github.com/openai/whisper.git
 test:
 	python -m pytest -vv --cov=main --cov=mylib test_*.py
 
 format:	
-	black *.py hugging-face/zero_shot_classification.py hugging-face/hf_whisper.py
+	black *.py
 
 lint:
 	pylint --disable=R,C --ignore-patterns=test_.*?py *.py mylib/*.py\
@@ -27,4 +34,4 @@ refactor: format lint
 deploy:
 	#deploy goes here
 		
-all: install lint test format deploy
+all: venv install lint test format deploy
